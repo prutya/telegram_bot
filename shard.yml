@@ -1,0 +1,9 @@
+name: telegram_bot
+version: 0.1.0
+
+authors:
+  - Anton Prudkohliad <anton.prudkohliad@gmail.com>
+
+crystal: 0.32.1
+
+license: MIT
