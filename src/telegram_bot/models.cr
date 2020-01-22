@@ -465,5 +465,98 @@ module TelegramBot
         strict: true
       )
     end
+
+    # https://core.telegram.org/bots/api#inlinequery
+    class InlineQuery < Base
+      JSON.mapping(
+        {
+          id:       String,
+          from:     User,
+          location: Location?,
+          query:    String,
+          offset:   String
+        },
+        strict: true
+      )
+    end
+
+    # https://core.telegram.org/bots/api#choseninlineresult
+    class ChosenInlineResult < Base
+      JSON.mapping(
+        {
+          result_id:         String,
+          from:              User,
+          location:          Location?,
+          inline_message_id: String?,
+          query:             String,
+        },
+        strict: true
+      )
+    end
+
+    # https://core.telegram.org/bots/api#callbackquery
+    class CallbackQuery < Base
+      JSON.mapping(
+        {
+          id:                String,
+          from:              User,
+          message:           Message?,
+          inline_message_id: String?,
+          chat_instance:     String,
+          data:              String?,
+          game_short_name:   String?
+        },
+        strict: true
+      )
+    end
+
+    # https://core.telegram.org/bots/api#shippingquery
+    class ShippingQuery < Base
+      JSON.mapping(
+        {
+          id:               String,
+          from:             User,
+          invoice_payload:  String,
+          shipping_address: ShippingAddress
+        },
+        strict: true
+      )
+    end
+
+    # https://core.telegram.org/bots/api#precheckoutquery
+    class PreCheckoutQuery < Base
+      JSON.mapping(
+        {
+          id:                 String,
+          from:               User,
+          currency:           String,
+          total_amount:       Int32,
+          invoice_payload:    String,
+          shipping_option_id: String?,
+          order_info:         OrderInfo?
+        },
+        strict: true
+      )
+    end
+
+    # https://core.telegram.org/bots/api#update
+    class Update < Base
+      JSON.mapping(
+        {
+          update_id:            Int32,
+          message:              Message?,
+          edited_message:       Message?,
+          channel_post:         Message?,
+          edited_channel_post:  Message?,
+          inline_query:         InlineQuery?,
+          chosen_inline_result: ChosenInlineResult?,
+          callback_query:       CallbackQuery?,
+          shipping_query:       ShippingQuery?,
+          pre_checkout_query:   PreCheckoutQuery?,
+          poll:                 Poll?
+        },
+        strict: true
+      )
+    end
   end
 end

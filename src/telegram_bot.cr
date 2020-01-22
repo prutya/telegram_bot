@@ -19,6 +19,63 @@ module TelegramBot
       @http_client.close
     end
 
+    # NOTE: Avoid using this method. Prefer webhooks.
+    def listen
+      offset = 0
+
+      loop do
+        result = get_updates(offset: offset, timeout: 30)
+
+        unless result.ok
+          next
+        end
+
+        unless updates = result.result.as?(Array(Models::Update))
+          next
+        end
+
+        if updates.empty?
+          next
+        end
+
+        offset = updates.last.update_id + 1
+
+        updates.each { |update| yield update }
+      end
+    end
+
+    # https://core.telegram.org/bots/api#getupdates
+    def get_updates(
+      offset          : Int32? = nil,
+      limit           : Int32? = nil,
+      timeout         : Int32? = nil,
+      allowed_updates : Array(String)? = nil
+    )
+      body = {} of String => (Int32 | Array(String))
+
+      if offset
+        body["offset"] = offset
+      end
+
+      if limit
+        body["limit"] = limit
+      end
+
+      if timeout
+        body["timeout"] = timeout
+      end
+
+      if allowed_updates
+        body["allowed_updates"] = allowed_updates
+      end
+
+      perform_request(
+        "getUpdates",
+        Models::Result(Array(Models::Update)),
+        body: body
+      )
+    end
+
     # https://core.telegram.org/bots/api#setwebhook
     def set_webhook(
       url             : String,
