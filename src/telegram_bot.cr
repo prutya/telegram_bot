@@ -268,6 +268,50 @@ module TelegramBot
       )
     end
 
+    # https://core.telegram.org/bots/api#sendcontact
+    def send_contact(
+      chat_id              : (Int32 | String),
+      phone_number         : String,
+      first_name           : String,
+      last_name            : String?              = nil,
+      vcard                : String?              = nil,
+      disable_notification : Bool?                = nil,
+      reply_to_message_id	 : Int32?               = nil,
+      reply_markup         : Models::ReplyMarkup? = nil
+    )
+      body = {} of String => (Int32 | String | Bool | Models::ReplyMarkup?)
+
+      body["chat_id"]      = chat_id
+      body["phone_number"] = phone_number
+      body["first_name"]   = first_name
+
+      if last_name
+        body["last_name"] = last_name
+      end
+
+      if vcard
+        body["vcard"] = vcard
+      end
+
+      if !disable_notification.nil?
+        body["disable_notification"] = disable_notification
+      end
+
+      if reply_to_message_id
+        body["reply_to_message_id"] = reply_to_message_id
+      end
+
+      if reply_markup
+        body["reply_markup"] = reply_markup
+      end
+
+      perform_request(
+        "sendContact",
+        Models::Result(Models::Message),
+        body: body
+      )
+    end
+
     private def perform_request(
       endpoint     : String,
       model        : Models::Base.class    = Models::Result(Bool),
