@@ -192,6 +192,7 @@ module TelegramBot
     end
 
     # https://core.telegram.org/bots/api#message
+    # TODO Implement missing keys
     class Message < Base
       JSON.mapping(
         {
@@ -212,8 +213,38 @@ module TelegramBot
           text:                    String?,
           entities:                Array(MessageEntity)?,
           caption_entities:        Array(MessageEntity)?,
+          # audio:                   Audio?,
+          # document:                Document?,
+          # animation:               Animation?,
+          # game:                    Game?,
+          photo:                   Array(PhotoSize)?,
+          # sticker:                 Sticker?,
+          # video:                   Video?,
+          # voice:                   Voice?,
+          # video_note:              VideoNote?,
+          caption:                 String?,
+          contact:                 Contact?,
+          location:                Location?,
+          venue:                   Venue?,
+          poll:                    Poll?,
+          new_chat_members:        Array(User)?,
+          left_chat_member:        User?,
+          new_chat_title:          String?,
+          new_chat_photo:          Array(PhotoSize)?,
+          delete_chat_photo:       Bool?,
+          group_chat_created:      Bool?,
+          supergroup_chat_created: Bool?,
+          channel_chat_created:    Bool?,
+          migrate_to_chat_id:      Int32?,
+          migrate_from_chat_id:    Int32?,
+          pinned_message:          Message?,
+          invoice:                 Invoice?,
+          successful_payment:      SuccessfulPayment?,
+          connected_website:       String?,
+          # passport_data:           PassportData?,
+          reply_markup:            InlineKeyboardMarkup?
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -293,7 +324,143 @@ module TelegramBot
           can_add_web_page_previews: Bool?,
           can_change_info:           Bool?,
           can_invite_users:          Bool?,
-          can_pin_messages:          Bool?,
+          can_pin_messages:          Bool?
+        },
+        strict: true
+      )
+    end
+
+    # https://core.telegram.org/bots/api#contact
+    class Contact < Base
+      JSON.mapping(
+        {
+          phone_number: String,
+          first_name:   String,
+          last_name:    String?,
+          user_id:      Int32?,
+          vcard:        String?
+        },
+        strict: true
+      )
+    end
+
+
+    # https://core.telegram.org/bots/api#location
+    class Location < Base
+      JSON.mapping(
+        {
+          latitude:  Float64,
+          longitude: Float64
+        },
+        strict: true
+      )
+    end
+
+    # https://core.telegram.org/bots/api#venue
+    class Venue < Base
+      JSON.mapping(
+        {
+          location:        Location,
+          title:           String,
+          address:         String,
+          foursquare_id:   String?,
+          foursquare_type: String?
+        },
+        strict: true
+      )
+    end
+
+    # https://core.telegram.org/bots/api#polloption
+    class PollOption < Base
+      JSON.mapping(
+        {
+          text:        String,
+          voter_count: Int32
+        },
+        strict: true
+      )
+    end
+
+    # https://core.telegram.org/bots/api#poll
+    class Poll < Base
+      JSON.mapping(
+        {
+          id:        String,
+          question:  String,
+          options:   Array(PollOption),
+          is_closed: Bool
+        },
+        strict: true
+      )
+    end
+
+    # https://core.telegram.org/bots/api#invoice
+    class Invoice < Base
+      JSON.mapping(
+        {
+          title:           String,
+          description:     String,
+          start_parameter: String,
+          currency:        String,
+          total_amount:    Int32
+        },
+        strict: true
+      )
+    end
+
+    # https://core.telegram.org/bots/api#shippingaddress
+    class ShippingAddress < Base
+      JSON.mapping(
+        {
+          country_code: String,
+          state:        String,
+          city:         String,
+          street_line1: String,
+          street_line2: String,
+          post_code:    String
+        },
+        strict: true
+      )
+    end
+
+    # https://core.telegram.org/bots/api#orderinfo
+    class OrderInfo < Base
+      JSON.mapping(
+        {
+          name:             String?,
+          phone_number:     String?,
+          email:            String?,
+          shipping_address: ShippingAddress?
+        },
+        strict: true
+      )
+    end
+
+    # https://core.telegram.org/bots/api#successfulpayment
+    class SuccessfulPayment < Base
+      JSON.mapping(
+        {
+          currency:                   String,
+          total_amount:               Int32,
+          invoice_payload:            String,
+          shipping_option_id:         String?,
+          order_info:                 OrderInfo?,
+          telegram_payment_charge_id: String,
+          provider_payment_charge_id: String
+        },
+        strict: true
+      )
+    end
+
+    # https://core.telegram.org/bots/api#photosize
+    class PhotoSize < Base
+      JSON.mapping(
+        {
+          file_id:        String,
+          file_unique_id: String,
+          width:          Int32,
+          height:         Int32,
+          file_size:      Int32?
         },
         strict: true
       )

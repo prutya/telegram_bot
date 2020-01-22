@@ -339,9 +339,9 @@ module TelegramBot
         body: json_body
       )
 
-      time_elapsed = Time.monotonic - time_start
+      elapsed = Time.monotonic - time_start
 
-      @logger.info("#{endpoint} - #{response.status_code}")
+      @logger.info("#{endpoint} - #{response.status_code} - #{elapsed.total_seconds.humanize(precision: 2, significant: false)}s")
 
       model.from_json(response.body)
     end
