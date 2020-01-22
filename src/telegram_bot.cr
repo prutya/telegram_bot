@@ -8,18 +8,12 @@ module TelegramBot
   VERSION = "0.1.0"
 
   class Client
-    @http_client : HTTP::Client
-    @token       : String
-    @logger      : Logger
-
     def initialize(
-      token : String,
-      logger : Logger = Logger.new(STDOUT)
-    )
-      @http_client = HTTP::Client.new(host: "api.telegram.org", tls: true)
-      @token = token
-      @logger = logger
-    end
+      @token       : String,
+      @logger      : Logger       = Logger.new(STDOUT),
+      @http_client : HTTP::Client =
+        HTTP::Client.new(host: "api.telegram.org", tls: true)
+    ); end
 
     def finalize
       @http_client.close
@@ -192,13 +186,97 @@ module TelegramBot
       )
     end
 
+    # https://core.telegram.org/bots/api#sendphoto
+    def send_photo(
+      chat_id              : (Int32 | String),
+      photo                : String, # TODO: Implement file upload (InputFile)
+      caption              : String?              = nil,
+      parse_mode           : String?              = nil,
+      disable_notification : Bool?                = nil,
+      reply_to_message_id  : Int32?               = nil,
+      reply_markup         : Models::ReplyMarkup? = nil
+    )
+      body = {} of String => (Int32 | String | Bool | Models::ReplyMarkup)
+
+      body["chat_id"] = chat_id
+      body["photo"]   = photo
+
+      if caption
+        body["caption"] = caption
+      end
+
+      if parse_mode
+        body["parse_mode"] = parse_mode
+      end
+
+      if !disable_notification.nil?
+        body["disable_notification"] = disable_notification
+      end
+
+      if reply_to_message_id
+        body["reply_to_message_id"] = reply_to_message_id
+      end
+
+      if reply_markup
+        body["reply_markup"] = reply_markup
+      end
+
+      perform_request(
+        "sendPhoto",
+        Models::Result(Models::Message),
+        body: body
+      )
+    end
+
+    # https://core.telegram.org/bots/api#sendlocation
+    def send_location(
+      chat_id              : (Int32 | String),
+      latitude             : Float64,
+      longitude            : Float64,
+      live_period          : Int32?               = nil,
+      disable_notification : Bool?                = nil,
+      reply_to_message_id  : Int32?               = nil,
+      reply_markup         : Models::ReplyMarkup? = nil
+    )
+      body =
+        {} of String => (Int32 | String | Float64 | Bool | Models::ReplyMarkup)
+
+      body["chat_id"]   = chat_id
+      body["latitude"]  = latitude
+      body["longitude"] = longitude
+
+      if live_period
+        body["live_period"] = live_period
+      end
+
+      if !disable_notification.nil?
+        body["disable_notification"] = disable_notification
+      end
+
+      if reply_to_message_id
+        body["reply_to_message_id"] = reply_to_message_id
+      end
+
+      if reply_markup
+        body["reply_markup"] = reply_markup
+      end
+
+      perform_request(
+        "sendLocation",
+        Models::Result(Models::Message),
+        body: body
+      )
+    end
+
     private def perform_request(
       endpoint     : String,
-      model        : Models::Base.class = Models::Result(Bool),
+      model        : Models::Base.class    = Models::Result(Bool),
       headers      : Hash(String, String)? = nil,
-      body         : Object? = nil,
+      body         : Object?               = nil,
     ) : Models::Base
       json_body = body.try(&.to_json)
+
+      time_start = Time.monotonic
 
       response = @http_client.post(
         "/bot#{@token}/#{endpoint}",
@@ -216,6 +294,10 @@ module TelegramBot
         end,
         body: json_body
       )
+
+      time_elapsed = Time.monotonic - time_start
+
+      @logger.info("#{endpoint} - #{response.status_code}")
 
       model.from_json(response.body)
     end
