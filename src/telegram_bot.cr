@@ -12,7 +12,8 @@ module TelegramBot
       @token       : String,
       @logger      : Logger       = Logger.new(STDOUT),
       @http_client : HTTP::Client =
-        HTTP::Client.new(host: "api.telegram.org", tls: true)
+        HTTP::Client.new(host: "api.telegram.org", tls: true),
+      @random      : Random       = Random::DEFAULT
     ); end
 
     def finalize
@@ -79,25 +80,55 @@ module TelegramBot
     # https://core.telegram.org/bots/api#setwebhook
     def set_webhook(
       url             : String,
-      # certificate : InputFile?,
+      certificate     : IO?            = nil,
       max_connections : Int32?         = nil,
       allowed_updates : Array(String)? = nil
     )
-      body = {} of String => (String | Integer | Array(String))
+      io = IO::Memory.new
 
-      body["url"] = url
+      boundary = @random.hex(20)
 
-      # TODO: Handle certificate
+      HTTP::FormData.build(io, boundary) do |formdata|
+        formdata.field("url", url)
 
-      if max_connections
-        body["max_connections"] = max_connections
+        if certificate
+          formdata.file(
+            "certificate",
+            certificate,
+            HTTP::FormData::FileMetadata.new(filename: "certificate")
+          )
+        end
+
+        if max_connections
+          formdata.field("max_connections", max_connections)
+        end
+
+        if allowed_updates
+          formdata.field("allowed_updates", allowed_updates.to_json)
+        end
       end
 
-      if allowed_updates
-        body["allowed_updates"] = allowed_updates
-      end
+      body = io.to_s
 
-      perform_request("setWebhook", body: body)
+      io.close
+
+      time_start = Time.monotonic
+
+      response = @http_client.post(
+        "/bot#{@token}/setWebhook",
+        headers: HTTP::Headers{
+          "Accept" => "application/json",
+          "Content-Type" => "multipart/form-data; boundary=#{boundary}",
+          "Content-Length" => body.bytesize.to_s
+        },
+        body: body
+      )
+
+      elapsed = Time.monotonic - time_start
+
+      @logger.info("setWebhook - #{response.status_code} - #{elapsed.total_seconds.humanize(precision: 2, significant: false)}s")
+
+      Models::Result(Bool).from_json(response.body)
     end
 
     # https://core.telegram.org/bots/api#deletewebhook
@@ -246,7 +277,7 @@ module TelegramBot
     # https://core.telegram.org/bots/api#sendphoto
     def send_photo(
       chat_id              : (Int32 | String),
-      photo                : String, # TODO: Implement file upload (InputFile)
+      photo                : String,
       caption              : String?              = nil,
       parse_mode           : String?              = nil,
       disable_notification : Bool?                = nil,
@@ -283,6 +314,72 @@ module TelegramBot
         Models::Result(Models::Message),
         body: body
       )
+    end
+
+    def send_photo(
+      chat_id              : (Int32 | String),
+      photo                : IO,
+      caption              : String?              = nil,
+      parse_mode           : String?              = nil,
+      disable_notification : Bool?                = nil,
+      reply_to_message_id  : Int32?               = nil,
+      reply_markup         : Models::ReplyMarkup? = nil
+    )
+      io = IO::Memory.new
+
+      boundary = @random.hex(20)
+
+      HTTP::FormData.build(io, boundary) do |formdata|
+        formdata.field("chat_id", chat_id)
+
+        formdata.file(
+          "photo",
+          photo,
+          HTTP::FormData::FileMetadata.new(filename: "photo")
+        )
+
+        if caption
+          formdata.field("caption", caption)
+        end
+
+        if parse_mode
+          formdata.field("parse_mode", parse_mode)
+        end
+
+        if !disable_notification.nil?
+          formdata.field("disable_notification", disable_notification)
+        end
+
+        if reply_to_message_id
+          formdata.field("reply_to_message_id", reply_to_message_id)
+        end
+
+        if reply_markup
+          formdata.field("reply_markup", reply_markup.to_json)
+        end
+      end
+
+      body = io.to_s
+
+      io.close
+
+      time_start = Time.monotonic
+
+      response = @http_client.post(
+        "/bot#{@token}/sendPhoto",
+        headers: HTTP::Headers{
+          "Accept" => "application/json",
+          "Content-Type" => "multipart/form-data; boundary=#{boundary}",
+          "Content-Length" => body.bytesize.to_s
+        },
+        body: body
+      )
+
+      elapsed = Time.monotonic - time_start
+
+      @logger.info("sendPhoto - #{response.status_code} - #{elapsed.total_seconds.humanize(precision: 2, significant: false)}s")
+
+      Models::Result(Models::Message).from_json(response.body)
     end
 
     # https://core.telegram.org/bots/api#sendlocation
@@ -381,18 +478,17 @@ module TelegramBot
 
       response = @http_client.post(
         "/bot#{@token}/#{endpoint}",
-        headers: HTTP::Headers.new.tap do |http_headers|
-          http_headers["Accept"] = "application/json"
+        headers:
+          HTTP::Headers{ "Accept" => "application/json" }.tap do |http_headers|
+            if json_body
+              http_headers["Content-Type"]   = "application/json"
+              http_headers["Content-Length"] = json_body.bytesize.to_s
+            end
 
-          if json_body
-            http_headers["Content-Type"]   = "application/json"
-            http_headers["Content-Length"] = json_body.bytesize.to_s
-          end
-
-          if headers
-            http_headers.merge!(headers)
-          end
-        end,
+            if headers
+              http_headers.merge!(headers)
+            end
+          end,
         body: json_body
       )
 
