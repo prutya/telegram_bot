@@ -15,7 +15,7 @@ module TelegramBot
           description: String?,
           error_code:  Int32?,
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -31,7 +31,7 @@ module TelegramBot
           max_connections:        Int32?,
           allowed_updates:        Array(String)?
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -41,7 +41,7 @@ module TelegramBot
         {
           inline_keyboard: Array(Array(InlineKeyboardButton))
         },
-        strict: true
+        strict: false
       )
 
       def initialize(@inline_keyboard : Array(Array(InlineKeyboardButton))); end
@@ -56,7 +56,7 @@ module TelegramBot
           one_time_keyboard: Bool?,
           selective:         Bool?
         },
-        strict: true
+        strict: false
       )
 
       def initialize(
@@ -80,7 +80,7 @@ module TelegramBot
           callback_game:                    CallbackGame?,
           pay:                              Bool?
         },
-        strict: true
+        strict: false
       )
 
       def initialize(
@@ -102,7 +102,7 @@ module TelegramBot
           remove_keyboard: Bool,
           selective:       Bool?
         },
-        strict: true
+        strict: false
       )
 
       def initialize(
@@ -118,7 +118,7 @@ module TelegramBot
           force_reply: Bool,
           selective:   Bool?
         },
-        strict: true
+        strict: false
       )
 
       def initialize(
@@ -136,7 +136,7 @@ module TelegramBot
           bot_username:         String?,
           request_write_access: Bool?
         },
-        strict: true
+        strict: false
       )
 
       def initialize(
@@ -159,7 +159,7 @@ module TelegramBot
           message_id:           Int32?,
           inline_message_id:    String?
         },
-        strict: true
+        strict: false
       )
 
       def initialize(
@@ -181,7 +181,7 @@ module TelegramBot
           request_contact:  Bool?,
           request_location: Bool?,
         },
-        strict: true
+        strict: false
       )
 
       def initialize(
@@ -258,7 +258,7 @@ module TelegramBot
           url:    String?,
           user:   User?
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -273,7 +273,7 @@ module TelegramBot
           username:      String?,
           language_code: String?
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -296,7 +296,7 @@ module TelegramBot
           sticker_set_name:    String?,
           can_set_sticker_set: Bool?
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -309,7 +309,7 @@ module TelegramBot
           big_file_id:          String,
           big_file_unique_id:   String
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -326,7 +326,7 @@ module TelegramBot
           can_invite_users:          Bool?,
           can_pin_messages:          Bool?
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -340,7 +340,7 @@ module TelegramBot
           user_id:      Int32?,
           vcard:        String?
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -352,7 +352,7 @@ module TelegramBot
           latitude:  Float64,
           longitude: Float64
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -366,7 +366,7 @@ module TelegramBot
           foursquare_id:   String?,
           foursquare_type: String?
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -377,7 +377,7 @@ module TelegramBot
           text:        String,
           voter_count: Int32
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -390,7 +390,7 @@ module TelegramBot
           options:   Array(PollOption),
           is_closed: Bool
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -404,7 +404,7 @@ module TelegramBot
           currency:        String,
           total_amount:    Int32
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -419,7 +419,7 @@ module TelegramBot
           street_line2: String,
           post_code:    String
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -432,7 +432,7 @@ module TelegramBot
           email:            String?,
           shipping_address: ShippingAddress?
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -448,7 +448,7 @@ module TelegramBot
           telegram_payment_charge_id: String,
           provider_payment_charge_id: String
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -462,7 +462,7 @@ module TelegramBot
           height:         Int32,
           file_size:      Int32?
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -476,7 +476,7 @@ module TelegramBot
           query:    String,
           offset:   String
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -490,7 +490,7 @@ module TelegramBot
           inline_message_id: String?,
           query:             String,
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -506,7 +506,7 @@ module TelegramBot
           data:              String?,
           game_short_name:   String?
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -519,7 +519,7 @@ module TelegramBot
           invoice_payload:  String,
           shipping_address: ShippingAddress
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -535,7 +535,7 @@ module TelegramBot
           shipping_option_id: String?,
           order_info:         OrderInfo?
         },
-        strict: true
+        strict: false
       )
     end
 
@@ -555,7 +555,7 @@ module TelegramBot
           pre_checkout_query:   PreCheckoutQuery?,
           poll:                 Poll?
         },
-        strict: true
+        strict: false
       )
     end
   end
