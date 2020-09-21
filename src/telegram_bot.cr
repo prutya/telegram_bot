@@ -1,5 +1,5 @@
 require "http/client"
-require "logger"
+require "log"
 require "uri"
 
 require "./telegram_bot/models"
@@ -10,9 +10,8 @@ module TelegramBot
   class Client
     def initialize(
       @token       : String,
-      @logger      : Logger       = Logger.new(STDOUT),
-      @http_client : HTTP::Client =
-        HTTP::Client.new(host: "api.telegram.org", tls: true),
+      @log         : Log          = Log.new("telegram_bot", Log::IOBackend.new(STDOUT), Log::Severity::Info),
+      @http_client : HTTP::Client = HTTP::Client.new(host: "api.telegram.org", tls: true),
       @random      : Random       = Random::DEFAULT
     ); end
 
@@ -125,8 +124,9 @@ module TelegramBot
       )
 
       elapsed = Time.monotonic - time_start
+      elapsed_str = -> () { elapsed.total_seconds < 1 ? elapsed.total_seconds.humanize(precision: 2, significant: false) : elapsed.total_seconds }
 
-      @logger.info("setWebhook - #{response.status_code} - #{elapsed.total_seconds.humanize(precision: 2, significant: false)}s")
+      @log.info { "setWebhook - #{response.status_code} - #{elapsed_str.call}s" }
 
       Models::Result(Bool).from_json(response.body)
     end
@@ -377,7 +377,7 @@ module TelegramBot
 
       elapsed = Time.monotonic - time_start
 
-      @logger.info("sendPhoto - #{response.status_code} - #{elapsed.total_seconds.humanize(precision: 2, significant: false)}s")
+      @log.info { "sendPhoto - #{response.status_code} - #{elapsed.total_seconds.humanize(precision: 2, significant: false)}s" }
 
       Models::Result(Models::Message).from_json(response.body)
     end
@@ -494,7 +494,7 @@ module TelegramBot
 
       elapsed = Time.monotonic - time_start
 
-      @logger.info("#{endpoint} - #{response.status_code} - #{elapsed.total_seconds.humanize(precision: 2, significant: false)}s")
+      @log.info { "#{endpoint} - #{response.status_code} - #{elapsed.total_seconds.humanize(precision: 2, significant: false)}s" }
 
       model.from_json(response.body)
     end

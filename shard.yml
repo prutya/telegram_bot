@@ -4,6 +4,6 @@ version: 0.1.0
 authors:
   - Anton Prudkohliad <anton.prudkohliad@gmail.com>
 
-crystal: 0.32.1
+crystal: 0.34.0
 
 license: MIT
