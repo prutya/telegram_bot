@@ -234,6 +234,39 @@ module TelegramBot
       )
     end
 
+    # https://core.telegram.org/bots/api#editmessagereplymarkup
+    def edit_message_reply_markup(
+      chat_id                  : (Int32 | String)?             = nil,
+      message_id               : Int32?                        = nil,
+      inline_message_id        : String?                       = nil,
+      reply_markup             : Models::InlineKeyboardMarkup? = nil
+    )
+      body =
+        {} of String => (String | Int32 | Bool | Models::InlineKeyboardMarkup)
+
+      if chat_id
+        body["chat_id"] = chat_id
+      end
+
+      if message_id
+        body["message_id"] = message_id
+      end
+
+      if inline_message_id
+        body["inline_message_id"] = inline_message_id
+      end
+
+      if reply_markup
+        body["reply_markup"] = reply_markup
+      end
+
+      perform_request(
+        "editMessageReplyMarkup",
+        Models::Result(Models::Message),
+        body: body
+      )
+    end
+
     # https://core.telegram.org/bots/api#deletemessage
     def delete_message(chat_id : (Int32 | String), message_id : Int32)
       perform_request(
