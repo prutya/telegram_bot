@@ -5,7 +5,13 @@ require "uri"
 require "./telegram_bot/models"
 
 module TelegramBot
-  VERSION = "0.1.0"
+  VERSION = "0.4.0"
+
+  enum ParseMode
+    Markdown
+    MarkdownV2
+    HTML
+  end
 
   class Client
     def initialize(
@@ -150,11 +156,11 @@ module TelegramBot
     def send_message(
       chat_id                  : (Int32 | String),
       text                     : String,
-      parse_mode               : String?              = nil,
-      disable_web_page_preview : Bool?                = nil,
-      disable_notification     : Bool?                = nil,
-      reply_to_message_id      : Int32?               = nil,
-      reply_markup             : Models::ReplyMarkup? = nil
+      parse_mode               : (ParseMode | String)? = nil,
+      disable_web_page_preview : Bool?                 = nil,
+      disable_notification     : Bool?                 = nil,
+      reply_to_message_id      : Int32?                = nil,
+      reply_markup             : Models::ReplyMarkup?  = nil
     )
       body = {} of String => (Int32 | String | Bool | Models::ReplyMarkup)
 
@@ -162,7 +168,7 @@ module TelegramBot
       body["text"]    = text
 
       if parse_mode
-        body["parse_mode"] = parse_mode
+        body["parse_mode"] = parse_mode.to_s
       end
 
       if !disable_web_page_preview.nil?
@@ -194,7 +200,7 @@ module TelegramBot
       chat_id                  : (Int32 | String)?             = nil,
       message_id               : Int32?                        = nil,
       inline_message_id        : String?                       = nil,
-      parse_mode               : String?                       = nil,
+      parse_mode               : (ParseMode | String)?         = nil,
       disable_web_page_preview : Bool?                         = nil,
       reply_markup             : Models::InlineKeyboardMarkup? = nil
     )
@@ -216,7 +222,7 @@ module TelegramBot
       end
 
       if parse_mode
-        body["parse_mode"] = parse_mode
+        body["parse_mode"] = parse_mode.to_s
       end
 
       if !disable_web_page_preview.nil?
@@ -311,11 +317,11 @@ module TelegramBot
     def send_photo(
       chat_id              : (Int32 | String),
       photo                : String,
-      caption              : String?              = nil,
-      parse_mode           : String?              = nil,
-      disable_notification : Bool?                = nil,
-      reply_to_message_id  : Int32?               = nil,
-      reply_markup         : Models::ReplyMarkup? = nil
+      caption              : String?                = nil,
+      parse_mode           : (ParseMode | String)?  = nil,
+      disable_notification : Bool?                  = nil,
+      reply_to_message_id  : Int32?                 = nil,
+      reply_markup         : Models::ReplyMarkup?   = nil
     )
       body = {} of String => (Int32 | String | Bool | Models::ReplyMarkup)
 
@@ -327,7 +333,7 @@ module TelegramBot
       end
 
       if parse_mode
-        body["parse_mode"] = parse_mode
+        body["parse_mode"] = parse_mode.to_s
       end
 
       if !disable_notification.nil?
@@ -352,11 +358,11 @@ module TelegramBot
     def send_photo(
       chat_id              : (Int32 | String),
       photo                : IO,
-      caption              : String?              = nil,
-      parse_mode           : String?              = nil,
-      disable_notification : Bool?                = nil,
-      reply_to_message_id  : Int32?               = nil,
-      reply_markup         : Models::ReplyMarkup? = nil
+      caption              : String?               = nil,
+      parse_mode           : (ParseMode | String)? = nil,
+      disable_notification : Bool?                 = nil,
+      reply_to_message_id  : Int32?                = nil,
+      reply_markup         : Models::ReplyMarkup?  = nil
     )
       io = IO::Memory.new
 
@@ -376,7 +382,7 @@ module TelegramBot
         end
 
         if parse_mode
-          formdata.field("parse_mode", parse_mode)
+          formdata.field("parse_mode", parse_mode.to_s)
         end
 
         if !disable_notification.nil?
