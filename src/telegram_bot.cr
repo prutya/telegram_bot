@@ -162,7 +162,7 @@ module TelegramBot
       reply_to_message_id      : Int32?                = nil,
       reply_markup             : Models::ReplyMarkup?  = nil
     )
-      body = {} of String => (Int32 | String | Bool | Models::ReplyMarkup)
+      body = {} of String => (Int64 | String | Bool | Int32 | Models::ReplyMarkup)
 
       body["chat_id"] = chat_id
       body["text"]    = text
@@ -205,7 +205,7 @@ module TelegramBot
       reply_markup             : Models::InlineKeyboardMarkup? = nil
     )
       body =
-        {} of String => (String | Int32 | Bool | Models::InlineKeyboardMarkup)
+        {} of String => (String | Int64 | Int32 | Bool | Models::InlineKeyboardMarkup)
 
       body["text"] = text
 
@@ -248,7 +248,7 @@ module TelegramBot
       reply_markup             : Models::InlineKeyboardMarkup? = nil
     )
       body =
-        {} of String => (String | Int32 | Bool | Models::InlineKeyboardMarkup)
+        {} of String => (Int64 | String | Int32 | Bool | Models::InlineKeyboardMarkup)
 
       if chat_id
         body["chat_id"] = chat_id
@@ -323,7 +323,7 @@ module TelegramBot
       reply_to_message_id  : Int32?                 = nil,
       reply_markup         : Models::ReplyMarkup?   = nil
     )
-      body = {} of String => (Int32 | String | Bool | Models::ReplyMarkup)
+      body = {} of String => (Int64 | Int32 | String | Bool | Models::ReplyMarkup)
 
       body["chat_id"] = chat_id
       body["photo"]   = photo
@@ -432,7 +432,7 @@ module TelegramBot
       reply_markup         : Models::ReplyMarkup? = nil
     )
       body =
-        {} of String => (Int32 | String | Float64 | Bool | Models::ReplyMarkup)
+        {} of String => (Int64 | Int32 | String | Float64 | Bool | Models::ReplyMarkup)
 
       body["chat_id"]   = chat_id
       body["latitude"]  = latitude
@@ -472,7 +472,7 @@ module TelegramBot
       reply_to_message_id	 : Int32?               = nil,
       reply_markup         : Models::ReplyMarkup? = nil
     )
-      body = {} of String => (Int32 | String | Bool | Models::ReplyMarkup?)
+      body = {} of String => (Int64 | Int32 | String | Bool | Models::ReplyMarkup?)
 
       body["chat_id"]      = chat_id
       body["phone_number"] = phone_number
