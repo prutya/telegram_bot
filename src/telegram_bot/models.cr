@@ -155,7 +155,7 @@ module TelegramBot
           score:                Int32,
           force:                Bool?,
           disable_edit_message: Bool?,
-          chat_id:              Int32?,
+          chat_id:              Int64?,
           message_id:           Int32?,
           inline_message_id:    String?
         },
@@ -167,7 +167,7 @@ module TelegramBot
         @score                : Int32,
         @force                : Bool?   = nil,
         @disable_edit_message : Bool?   = nil,
-        @chat_id              : Int32?  = nil,
+        @chat_id              : Int64?  = nil,
         @message_id           : Int32?  = nil,
         @inline_message_id    : String? = nil
       ); end
@@ -235,8 +235,8 @@ module TelegramBot
           group_chat_created:      Bool?,
           supergroup_chat_created: Bool?,
           channel_chat_created:    Bool?,
-          migrate_to_chat_id:      Int32?,
-          migrate_from_chat_id:    Int32?,
+          migrate_to_chat_id:      Int64?,
+          migrate_from_chat_id:    Int64?,
           pinned_message:          Message?,
           invoice:                 Invoice?,
           successful_payment:      SuccessfulPayment?,
@@ -281,7 +281,7 @@ module TelegramBot
     class Chat < Base
       JSON.mapping(
         {
-          id:                  Int32,
+          id:                  Int64,
           type:                String,
           title:               String?,
           username:            String?,

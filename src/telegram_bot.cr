@@ -5,7 +5,7 @@ require "uri"
 require "./telegram_bot/models"
 
 module TelegramBot
-  VERSION = "0.4.0"
+  VERSION = "0.4.1"
 
   enum ParseMode
     Markdown
@@ -154,7 +154,7 @@ module TelegramBot
 
     # https://core.telegram.org/bots/api#sendmessage
     def send_message(
-      chat_id                  : (Int32 | String),
+      chat_id                  : (Int64 | String),
       text                     : String,
       parse_mode               : (ParseMode | String)? = nil,
       disable_web_page_preview : Bool?                 = nil,
@@ -197,7 +197,7 @@ module TelegramBot
     # https://core.telegram.org/bots/api#editmessagetext
     def edit_message_text(
       text                     : String,
-      chat_id                  : (Int32 | String)?             = nil,
+      chat_id                  : (Int64 | String)?             = nil,
       message_id               : Int32?                        = nil,
       inline_message_id        : String?                       = nil,
       parse_mode               : (ParseMode | String)?         = nil,
@@ -242,7 +242,7 @@ module TelegramBot
 
     # https://core.telegram.org/bots/api#editmessagereplymarkup
     def edit_message_reply_markup(
-      chat_id                  : (Int32 | String)?             = nil,
+      chat_id                  : (Int64 | String)?             = nil,
       message_id               : Int32?                        = nil,
       inline_message_id        : String?                       = nil,
       reply_markup             : Models::InlineKeyboardMarkup? = nil
@@ -274,7 +274,7 @@ module TelegramBot
     end
 
     # https://core.telegram.org/bots/api#deletemessage
-    def delete_message(chat_id : (Int32 | String), message_id : Int32)
+    def delete_message(chat_id : (Int64 | String), message_id : Int32)
       perform_request(
         "deleteMessage",
         body: { chat_id: chat_id, message_id: message_id }
@@ -282,7 +282,7 @@ module TelegramBot
     end
 
     # https://core.telegram.org/bots/api#sendchataction
-    def send_chat_action(chat_id : (Int32 | String), action : String)
+    def send_chat_action(chat_id : (Int64 | String), action : String)
       perform_request(
         "sendChatAction",
         body: { chat_id: chat_id, action: action }
@@ -291,8 +291,8 @@ module TelegramBot
 
     # https://core.telegram.org/bots/api#forwardmessage
     def forward_message(
-      chat_id              : (Int32 | String),
-      from_chat_id         : (Int32 | String),
+      chat_id              : (Int64 | String),
+      from_chat_id         : (Int64 | String),
       message_id           : Int32,
       disable_notification : Bool? = nil
     )
@@ -315,7 +315,7 @@ module TelegramBot
 
     # https://core.telegram.org/bots/api#sendphoto
     def send_photo(
-      chat_id              : (Int32 | String),
+      chat_id              : (Int64 | String),
       photo                : String,
       caption              : String?                = nil,
       parse_mode           : (ParseMode | String)?  = nil,
@@ -356,7 +356,7 @@ module TelegramBot
     end
 
     def send_photo(
-      chat_id              : (Int32 | String),
+      chat_id              : (Int64 | String),
       photo                : IO,
       caption              : String?               = nil,
       parse_mode           : (ParseMode | String)? = nil,
@@ -423,7 +423,7 @@ module TelegramBot
 
     # https://core.telegram.org/bots/api#sendlocation
     def send_location(
-      chat_id              : (Int32 | String),
+      chat_id              : (Int64 | String),
       latitude             : Float64,
       longitude            : Float64,
       live_period          : Int32?               = nil,
@@ -463,7 +463,7 @@ module TelegramBot
 
     # https://core.telegram.org/bots/api#sendcontact
     def send_contact(
-      chat_id              : (Int32 | String),
+      chat_id              : (Int64 | String),
       phone_number         : String,
       first_name           : String,
       last_name            : String?              = nil,
