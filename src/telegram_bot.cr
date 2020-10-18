@@ -5,7 +5,7 @@ require "uri"
 require "./telegram_bot/models"
 
 module TelegramBot
-  VERSION = "0.6.0"
+  VERSION = "0.6.1"
 
   enum ParseMode
     Markdown

@@ -564,8 +564,11 @@ module TelegramBot
         {
           command:     String,
           description: String
-        }
+        },
+        strict: false
       )
+
+      def initialize(@command : String, @description : String); end
     end
   end
 end
