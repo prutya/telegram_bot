@@ -558,5 +558,14 @@ module TelegramBot
         strict: false
       )
     end
+
+    class BotCommand < Base
+      JSON.mapping(
+        {
+          command:     String,
+          description: String
+        }
+      )
+    end
   end
 end

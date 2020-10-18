@@ -5,7 +5,7 @@ require "uri"
 require "./telegram_bot/models"
 
 module TelegramBot
-  VERSION = "0.5.0"
+  VERSION = "0.6.0"
 
   enum ParseMode
     Markdown
@@ -510,6 +510,14 @@ module TelegramBot
         "getChatMembersCount",
         Models::Result(Int64),
         body: { chat_id: chat_id }
+      )
+    end
+
+    def set_my_commands(commands : Array(Models::BotCommand))
+      perform_request(
+        "setMyCommands",
+        Models::Result(Array(Models::BotCommand)),
+        body: { commands: commands }
       )
     end
 
