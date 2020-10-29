@@ -5,7 +5,7 @@ require "uri"
 require "./telegram_bot/models"
 
 module TelegramBot
-  VERSION = "0.6.2"
+  VERSION = "0.6.3"
 
   enum ParseMode
     Markdown
@@ -14,11 +14,13 @@ module TelegramBot
   end
 
   class Client
+    getter token : String
+
     def initialize(
       @token       : String,
       @log         : Log          = Log.new("telegram_bot", Log::IOBackend.new(STDOUT), Log::Severity::Info),
       @http_client : HTTP::Client = HTTP::Client.new(host: "api.telegram.org", tls: true),
-      @random      : Random       = Random::DEFAULT
+      @random      : Random       = Random::Secure
     ); end
 
     def finalize
