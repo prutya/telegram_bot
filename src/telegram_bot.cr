@@ -7,6 +7,8 @@ require "./telegram_bot/models"
 module TelegramBot
   VERSION = "0.6.3"
 
+  Log = ::Log.for("telegram_bot")
+
   enum ParseMode
     Markdown
     MarkdownV2
@@ -14,11 +16,12 @@ module TelegramBot
   end
 
   class Client
+    Log = TelegramBot::Log.for("client")
+
     getter token : String
 
     def initialize(
       @token       : String,
-      @log         : Log          = Log.new("telegram_bot", Log::IOBackend.new(STDOUT), Log::Severity::Info),
       @http_client : HTTP::Client = HTTP::Client.new(host: "api.telegram.org", tls: true),
       @random      : Random       = Random::Secure
     ); end
@@ -134,7 +137,7 @@ module TelegramBot
       elapsed = Time.monotonic - time_start
       elapsed_str = -> () { elapsed.total_seconds < 1 ? elapsed.total_seconds.humanize(precision: 2, significant: false) : elapsed.total_seconds }
 
-      @log.info { "setWebhook - #{response.status_code} - #{elapsed_str.call}s" }
+      Log.for("setWebhook").info { "#{response.status_code} - #{elapsed_str.call}s" }
 
       Models::Result(Bool).from_json(response.body)
     end
@@ -418,7 +421,7 @@ module TelegramBot
 
       elapsed = Time.monotonic - time_start
 
-      @log.info { "sendPhoto - #{response.status_code} - #{elapsed.total_seconds.humanize(precision: 2, significant: false)}s" }
+      Log.for("sendPhoto").info { "#{response.status_code} - #{elapsed.total_seconds.humanize(precision: 2, significant: false)}s" }
 
       Models::Result(Models::Message).from_json(response.body)
     end
@@ -550,7 +553,7 @@ module TelegramBot
 
       elapsed = Time.monotonic - time_start
 
-      @log.info { "#{endpoint} - #{response.status_code} - #{elapsed.total_seconds.humanize(precision: 2, significant: false)}s" }
+      Log.for(endpoint).info { "#{response.status_code} - #{elapsed.total_seconds.humanize(precision: 2, significant: false)}s" }
 
       model.from_json(response.body)
     end
