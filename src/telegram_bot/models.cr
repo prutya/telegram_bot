@@ -13,7 +13,7 @@ module TelegramBot
       property ok : Bool
       property result : T?
       property description : String?
-      property error_code : Int32
+      property error_code : Int32?
     end
 
     # https://core.telegram.org/bots/api#webhookinfo
