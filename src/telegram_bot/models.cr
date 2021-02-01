@@ -3,61 +3,43 @@ require "json"
 module TelegramBot
   # TODO: Sort models as done in API docs
   module Models
-    abstract class Base; end
+    abstract class Base
+      include JSON::Serializable
+    end
 
     alias ReplyMarkup = (InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply)
 
     class Result(T) < Base
-      JSON.mapping(
-        {
-          ok:          Bool,
-          result:      T?,
-          description: String?,
-          error_code:  Int32?,
-        },
-        strict: false
-      )
+      property ok : Bool
+      property result : T?
+      property description : String?
+      property error_code : Int32
     end
 
     # https://core.telegram.org/bots/api#webhookinfo
     class WebhookInfo < Base
-      JSON.mapping(
-        {
-          url:                    String,
-          has_custom_certificate: Bool,
-          pending_update_count:   Int32,
-          last_error_date:        Int32?,
-          last_error_message:     String?,
-          max_connections:        Int32?,
-          allowed_updates:        Array(String)?
-        },
-        strict: false
-      )
+      property url                    : String
+      property has_custom_certificate : Bool
+      property pending_update_count   : Int32
+      property last_error_date        : Int32?
+      property last_error_message     : String?
+      property max_connections        : Int32?
+      property allowed_updates        : Array(String)?
     end
 
     # https://core.telegram.org/bots/api#inlinekeyboardmarkup
     class InlineKeyboardMarkup < Base
-      JSON.mapping(
-        {
-          inline_keyboard: Array(Array(InlineKeyboardButton))
-        },
-        strict: false
-      )
+      property inline_keyboard : Array(Array(InlineKeyboardButton))
 
       def initialize(@inline_keyboard : Array(Array(InlineKeyboardButton))); end
     end
 
     # https://core.telegram.org/bots/api#replykeyboardmarkup
     class ReplyKeyboardMarkup < Base
-      JSON.mapping(
-        {
-          keyboard:          Array(Array(KeyboardButton)),
-          resize_keyboard:   Bool?,
-          one_time_keyboard: Bool?,
-          selective:         Bool?
-        },
-        strict: false
-      )
+      property keyboard          : Array(Array(KeyboardButton))
+      property resize_keyboard   : Bool?
+      property one_time_keyboard : Bool?
+      property selective         : Bool?
 
       def initialize(
         @keyboard          : Array(Array(KeyboardButton)),
@@ -69,19 +51,14 @@ module TelegramBot
 
     # https://core.telegram.org/bots/api#inlinekeyboardbutton
     class InlineKeyboardButton < Base
-      JSON.mapping(
-        {
-          text:                             String,
-          url:                              String?,
-          login_url:                        LoginUrl?,
-          callback_data:                    String?,
-          switch_inline_query:              String?,
-          switch_inline_query_current_chat: String?,
-          callback_game:                    CallbackGame?,
-          pay:                              Bool?
-        },
-        strict: false
-      )
+      property text                             : String
+      property url                              : String?
+      property login_url                        : LoginUrl?
+      property callback_data                    : String?
+      property switch_inline_query              : String?
+      property switch_inline_query_current_chat : String?
+      property callback_game                    : CallbackGame?
+      property pay                              : Bool?
 
       def initialize(
         @text                             : String,
@@ -97,13 +74,8 @@ module TelegramBot
 
     # https://core.telegram.org/bots/api#replykeyboardremove
     class ReplyKeyboardRemove < Base
-      JSON.mapping(
-        {
-          remove_keyboard: Bool,
-          selective:       Bool?
-        },
-        strict: false
-      )
+      property remove_keyboard : Bool
+      property selective     : Bool?
 
       def initialize(
         @remove_keyboard : Bool  = true,
@@ -113,13 +85,8 @@ module TelegramBot
 
     # https://core.telegram.org/bots/api#forcereply
     class ForceReply < Base
-      JSON.mapping(
-        {
-          force_reply: Bool,
-          selective:   Bool?
-        },
-        strict: false
-      )
+      property force_reply : Bool
+      property selective   : Bool?
 
       def initialize(
         @force_reply : Bool,
@@ -129,15 +96,10 @@ module TelegramBot
 
     # https://core.telegram.org/bots/api#loginurl
     class LoginUrl < Base
-      JSON.mapping(
-        {
-          url:                  String,
-          forward_text:         String?,
-          bot_username:         String?,
-          request_write_access: Bool?
-        },
-        strict: false
-      )
+      property url                  : String
+      property forward_text         : String?
+      property bot_username         : String?
+      property request_write_access : Bool?
 
       def initialize(
         @url                  : String,
@@ -149,18 +111,13 @@ module TelegramBot
 
     # https://core.telegram.org/bots/api#callbackgame
     class CallbackGame < Base
-      JSON.mapping(
-        {
-          user_id:              Int32,
-          score:                Int32,
-          force:                Bool?,
-          disable_edit_message: Bool?,
-          chat_id:              Int64?,
-          message_id:           Int32?,
-          inline_message_id:    String?
-        },
-        strict: false
-      )
+      property user_id              : Int32
+      property score                : Int32
+      property force                : Bool?
+      property disable_edit_message : Bool?
+      property chat_id              : Int64?
+      property message_id           : Int32?
+      property inline_message_id    : String?
 
       def initialize(
         @user_id              : Int32,
@@ -175,14 +132,9 @@ module TelegramBot
 
     # https://core.telegram.org/bots/api#keyboardbutton
     class KeyboardButton < Base
-      JSON.mapping(
-        {
-          text:             String,
-          request_contact:  Bool?,
-          request_location: Bool?,
-        },
-        strict: false
-      )
+      property text             : String
+      property request_contact  : Bool?
+      property request_location : Bool?
 
       def initialize(
         @text             : String,
@@ -194,379 +146,264 @@ module TelegramBot
     # https://core.telegram.org/bots/api#message
     # TODO Implement missing keys
     class Message < Base
-      JSON.mapping(
-        {
-          message_id:              Int32,
-          from:                    User?,
-          date:                    Int32,
-          chat:                    Chat,
-          forward_from:            User?,
-          forward_from_chat:       Chat?,
-          forward_from_message_id: Int32?,
-          forward_signature:       String?,
-          forward_sender_name:     String?,
-          forward_date:            Int32?,
-          reply_to_message:        Message?,
-          edit_date:               Int32?,
-          media_group_id:          String?,
-          author_signature:        String?,
-          text:                    String?,
-          entities:                Array(MessageEntity)?,
-          caption_entities:        Array(MessageEntity)?,
-          # audio:                   Audio?,
-          # document:                Document?,
-          # animation:               Animation?,
-          # game:                    Game?,
-          photo:                   Array(PhotoSize)?,
-          # sticker:                 Sticker?,
-          # video:                   Video?,
-          # voice:                   Voice?,
-          # video_note:              VideoNote?,
-          caption:                 String?,
-          contact:                 Contact?,
-          location:                Location?,
-          venue:                   Venue?,
-          poll:                    Poll?,
-          new_chat_members:        Array(User)?,
-          left_chat_member:        User?,
-          new_chat_title:          String?,
-          new_chat_photo:          Array(PhotoSize)?,
-          delete_chat_photo:       Bool?,
-          group_chat_created:      Bool?,
-          supergroup_chat_created: Bool?,
-          channel_chat_created:    Bool?,
-          migrate_to_chat_id:      Int64?,
-          migrate_from_chat_id:    Int64?,
-          pinned_message:          Message?,
-          invoice:                 Invoice?,
-          successful_payment:      SuccessfulPayment?,
-          connected_website:       String?,
-          # passport_data:           PassportData?,
-          reply_markup:            InlineKeyboardMarkup?
-        },
-        strict: false
-      )
+      property message_id              : Int32
+      property from                    : User?
+      property date                    : Int32
+      property chat                    : Chat
+      property forward_from            : User?
+      property forward_from_chat       : Chat?
+      property forward_from_message_id : Int32?
+      property forward_signature       : String?
+      property forward_sender_name     : String?
+      property forward_date            : Int32?
+      property reply_to_message        : Message?
+      property edit_date               : Int32?
+      property media_group_id          : String?
+      property author_signature        : String?
+      property text                    : String?
+      property entities                : Array(MessageEntity)?
+      property caption_entities        : Array(MessageEntity)?
+      # property audio                   : Audio?
+      # property document                : Document?
+      # property animation               : Animation?
+      # property game                    : Game?
+      property photo                   : Array(PhotoSize)?
+      # property sticker                 : Sticker?
+      # property video                   : Video?
+      # property voice                   : Voice?
+      # property video_note              : VideoNote?
+      property caption                 : String?
+      property contact                 : Contact?
+      property location                : Location?
+      property venue                   : Venue?
+      property poll                    : Poll?
+      property new_chat_members        : Array(User)?
+      property left_chat_member        : User?
+      property new_chat_title          : String?
+      property new_chat_photo          : Array(PhotoSize)?
+      property delete_chat_photo       : Bool?
+      property group_chat_created      : Bool?
+      property supergroup_chat_created : Bool?
+      property channel_chat_created    : Bool?
+      property migrate_to_chat_id      : Int64?
+      property migrate_from_chat_id    : Int64?
+      property pinned_message          : Message?
+      property invoice                 : Invoice?
+      property successful_payment      : SuccessfulPayment?
+      property connected_website       : String?
+      # property passport_data           : PassportData?
+      property reply_markup            : InlineKeyboardMarkup?
     end
 
     # https://core.telegram.org/bots/api#messageentity
     class MessageEntity < Base
-      JSON.mapping(
-        {
-          type:   String,
-          offset: Int32,
-          length: Int32,
-          url:    String?,
-          user:   User?
-        },
-        strict: false
-      )
+      property type   : String
+      property offset : Int32
+      property length : Int32
+      property url    : String?
+      property user   : User?
     end
 
     # https://core.telegram.org/bots/api#user
     class User < Base
-      JSON.mapping(
-        {
-          id:            Int32,
-          is_bot:        Bool,
-          first_name:    String,
-          last_name:     String?,
-          username:      String?,
-          language_code: String?
-        },
-        strict: false
-      )
+      property id            : Int32
+      property is_bot        : Bool
+      property first_name    : String
+      property last_name     : String?
+      property username      : String?
+      property language_code : String?
     end
 
     # https://core.telegram.org/bots/api#chat
     class Chat < Base
-      JSON.mapping(
-        {
-          id:                  Int64,
-          type:                String,
-          title:               String?,
-          username:            String?,
-          first_name:          String?,
-          last_name:           String?,
-          photo:               ChatPhoto?,
-          description:         String?,
-          invite_link:         String?,
-          pinned_message:      Message?,
-          permissions:         ChatPermissions?,
-          slow_mode_delay:     Int32?,
-          sticker_set_name:    String?,
-          can_set_sticker_set: Bool?
-        },
-        strict: false
-      )
+      property id                  : Int64
+      property type                : String
+      property title               : String?
+      property username            : String?
+      property first_name          : String?
+      property last_name           : String?
+      property photo               : ChatPhoto?
+      property description         : String?
+      property invite_link         : String?
+      property pinned_message      : Message?
+      property permissions         : ChatPermissions?
+      property slow_mode_delay     : Int32?
+      property sticker_set_name    : String?
+      property can_set_sticker_set : Bool?
     end
 
     # https://core.telegram.org/bots/api#chatphoto
     class ChatPhoto < Base
-      JSON.mapping(
-        {
-          small_file_id:        String,
-          small_file_unique_id: String,
-          big_file_id:          String,
-          big_file_unique_id:   String
-        },
-        strict: false
-      )
+      property small_file_id        : String
+      property small_file_unique_id : String
+      property big_file_id          : String
+      property big_file_unique_id   : String
     end
 
     # https://core.telegram.org/bots/api#chatpermissions
     class ChatPermissions < Base
-      JSON.mapping(
-        {
-          can_send_messages:         Bool?,
-          can_send_media_messages:   Bool?,
-          can_send_polls:            Bool?,
-          can_send_other_messages:   Bool?,
-          can_add_web_page_previews: Bool?,
-          can_change_info:           Bool?,
-          can_invite_users:          Bool?,
-          can_pin_messages:          Bool?
-        },
-        strict: false
-      )
+      property can_send_messages         : Bool?
+      property can_send_media_messages   : Bool?
+      property can_send_polls            : Bool?
+      property can_send_other_messages   : Bool?
+      property can_add_web_page_previews : Bool?
+      property can_change_info           : Bool?
+      property can_invite_users          : Bool?
+      property can_pin_messages          : Bool?
     end
 
     # https://core.telegram.org/bots/api#contact
     class Contact < Base
-      JSON.mapping(
-        {
-          phone_number: String,
-          first_name:   String,
-          last_name:    String?,
-          user_id:      Int32?,
-          vcard:        String?
-        },
-        strict: false
-      )
+      property phone_number : String
+      property first_name   : String
+      property last_name    : String?
+      property user_id      : Int32?
+      property vcard        : String?
     end
 
 
     # https://core.telegram.org/bots/api#location
     class Location < Base
-      JSON.mapping(
-        {
-          latitude:  Float64,
-          longitude: Float64
-        },
-        strict: false
-      )
+      property latitude  : Float64
+      property longitude : Float64
     end
 
     # https://core.telegram.org/bots/api#venue
     class Venue < Base
-      JSON.mapping(
-        {
-          location:        Location,
-          title:           String,
-          address:         String,
-          foursquare_id:   String?,
-          foursquare_type: String?
-        },
-        strict: false
-      )
+      property location        : Location
+      property title           : String
+      property address         : String
+      property foursquare_id   : String?
+      property foursquare_type : String?
     end
 
     # https://core.telegram.org/bots/api#polloption
     class PollOption < Base
-      JSON.mapping(
-        {
-          text:        String,
-          voter_count: Int32
-        },
-        strict: false
-      )
+      property text        : String
+      property voter_count : Int32
     end
 
     # https://core.telegram.org/bots/api#poll
     class Poll < Base
-      JSON.mapping(
-        {
-          id:        String,
-          question:  String,
-          options:   Array(PollOption),
-          is_closed: Bool
-        },
-        strict: false
-      )
+      property id        : String
+      property question  : String
+      property options   : Array(PollOption)
+      property is_closed : Bool
     end
 
     # https://core.telegram.org/bots/api#invoice
     class Invoice < Base
-      JSON.mapping(
-        {
-          title:           String,
-          description:     String,
-          start_parameter: String,
-          currency:        String,
-          total_amount:    Int32
-        },
-        strict: false
-      )
+      property title           : String
+      property description     : String
+      property start_parameter : String
+      property currency        : String
+      property total_amount    : Int32
     end
 
     # https://core.telegram.org/bots/api#shippingaddress
     class ShippingAddress < Base
-      JSON.mapping(
-        {
-          country_code: String,
-          state:        String,
-          city:         String,
-          street_line1: String,
-          street_line2: String,
-          post_code:    String
-        },
-        strict: false
-      )
+      property country_code : String
+      property state        : String
+      property city         : String
+      property street_line1 : String
+      property street_line2 : String
+      property post_code    : String
     end
 
     # https://core.telegram.org/bots/api#orderinfo
     class OrderInfo < Base
-      JSON.mapping(
-        {
-          name:             String?,
-          phone_number:     String?,
-          email:            String?,
-          shipping_address: ShippingAddress?
-        },
-        strict: false
-      )
+      property name             : String?
+      property phone_number     : String?
+      property email            : String?
+      property shipping_address : ShippingAddress?
     end
 
     # https://core.telegram.org/bots/api#successfulpayment
     class SuccessfulPayment < Base
-      JSON.mapping(
-        {
-          currency:                   String,
-          total_amount:               Int32,
-          invoice_payload:            String,
-          shipping_option_id:         String?,
-          order_info:                 OrderInfo?,
-          telegram_payment_charge_id: String,
-          provider_payment_charge_id: String
-        },
-        strict: false
-      )
+      property currency                   : String
+      property total_amount               : Int32
+      property invoice_payload            : String
+      property shipping_option_id         : String?
+      property order_info                 : OrderInfo?
+      property telegram_payment_charge_id : String
+      property provider_payment_charge_id : String
     end
 
     # https://core.telegram.org/bots/api#photosize
     class PhotoSize < Base
-      JSON.mapping(
-        {
-          file_id:        String,
-          file_unique_id: String,
-          width:          Int32,
-          height:         Int32,
-          file_size:      Int32?
-        },
-        strict: false
-      )
+      property file_id        : String
+      property file_unique_id : String
+      property width          : Int32
+      property height         : Int32
+      property file_size      : Int32?
     end
 
     # https://core.telegram.org/bots/api#inlinequery
     class InlineQuery < Base
-      JSON.mapping(
-        {
-          id:       String,
-          from:     User,
-          location: Location?,
-          query:    String,
-          offset:   String
-        },
-        strict: false
-      )
+      property id       : String
+      property from     : User
+      property location : Location?
+      property query    : String
+      property offset   : String
     end
 
     # https://core.telegram.org/bots/api#choseninlineresult
     class ChosenInlineResult < Base
-      JSON.mapping(
-        {
-          result_id:         String,
-          from:              User,
-          location:          Location?,
-          inline_message_id: String?,
-          query:             String,
-        },
-        strict: false
-      )
+      property result_id         : String
+      property from              : User
+      property location          : Location?
+      property inline_message_id : String?
+      property query             : String
     end
 
     # https://core.telegram.org/bots/api#callbackquery
     class CallbackQuery < Base
-      JSON.mapping(
-        {
-          id:                String,
-          from:              User,
-          message:           Message?,
-          inline_message_id: String?,
-          chat_instance:     String,
-          data:              String?,
-          game_short_name:   String?
-        },
-        strict: false
-      )
+      property id                : String
+      property from              : User
+      property message           : Message?
+      property inline_message_id : String?
+      property chat_instance     : String
+      property data              : String?
+      property game_short_name   : String?
     end
 
     # https://core.telegram.org/bots/api#shippingquery
     class ShippingQuery < Base
-      JSON.mapping(
-        {
-          id:               String,
-          from:             User,
-          invoice_payload:  String,
-          shipping_address: ShippingAddress
-        },
-        strict: false
-      )
+      property id               : String
+      property from             : User
+      property invoice_payload  : String
+      property shipping_address : ShippingAddress
     end
 
     # https://core.telegram.org/bots/api#precheckoutquery
     class PreCheckoutQuery < Base
-      JSON.mapping(
-        {
-          id:                 String,
-          from:               User,
-          currency:           String,
-          total_amount:       Int32,
-          invoice_payload:    String,
-          shipping_option_id: String?,
-          order_info:         OrderInfo?
-        },
-        strict: false
-      )
+      property id                 : String
+      property from               : User
+      property currency           : String
+      property total_amount       : Int32
+      property invoice_payload    : String
+      property shipping_option_id : String?
+      property order_info         : OrderInfo?
     end
 
     # https://core.telegram.org/bots/api#update
     class Update < Base
-      JSON.mapping(
-        {
-          update_id:            Int32,
-          message:              Message?,
-          edited_message:       Message?,
-          channel_post:         Message?,
-          edited_channel_post:  Message?,
-          inline_query:         InlineQuery?,
-          chosen_inline_result: ChosenInlineResult?,
-          callback_query:       CallbackQuery?,
-          shipping_query:       ShippingQuery?,
-          pre_checkout_query:   PreCheckoutQuery?,
-          poll:                 Poll?
-        },
-        strict: false
-      )
+      property update_id            : Int32
+      property message              : Message?
+      property edited_message       : Message?
+      property channel_post         : Message?
+      property edited_channel_post  : Message?
+      property inline_query         : InlineQuery?
+      property chosen_inline_result : ChosenInlineResult?
+      property callback_query       : CallbackQuery?
+      property shipping_query       : ShippingQuery?
+      property pre_checkout_query   : PreCheckoutQuery?
+      property poll                 : Poll?
     end
 
     class BotCommand < Base
-      JSON.mapping(
-        {
-          command:     String,
-          description: String
-        },
-        strict: false
-      )
+      property command     : String
+      property description : String
 
       def initialize(@command : String, @description : String); end
     end
