@@ -525,6 +525,14 @@ module TelegramBot
       )
     end
 
+    def get_file(file_id : String)
+      perform_request(
+        "getFile",
+        Models::Result(Models::File),
+        body: { file_id: file_id }
+      )
+    end
+
     private def perform_request(
       endpoint     : String,
       model        : Models::Base.class    = Models::Result(Bool),

@@ -401,6 +401,14 @@ module TelegramBot
       property poll                 : Poll?
     end
 
+    # https://core.telegram.org/bots/api#file
+    class File < Base
+      property file_id : String
+      property file_unique_id : String
+      property file_size : Int32?
+      property file_path : String?
+    end
+
     class BotCommand < Base
       property command     : String
       property description : String
