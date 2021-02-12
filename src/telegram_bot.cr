@@ -5,7 +5,7 @@ require "uri"
 require "./telegram_bot/models"
 
 module TelegramBot
-  VERSION = "1.3.1"
+  VERSION = "1.4.0"
 
   Log = ::Log.for("telegram_bot")
 
@@ -673,6 +673,10 @@ module TelegramBot
         Models::Result(Models::File),
         body: { file_id: file_id }
       )
+    end
+
+    def download_file(file_path : String)
+      @http_client.get("/file/bot#{@token}/#{file_path}")
     end
 
     private def perform_request(
