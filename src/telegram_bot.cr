@@ -5,7 +5,7 @@ require "uri"
 require "./telegram_bot/models"
 
 module TelegramBot
-  VERSION = "1.0.1"
+  VERSION = "1.2.0"
 
   Log = ::Log.for("telegram_bot")
 
@@ -424,6 +424,67 @@ module TelegramBot
       Log.for("sendPhoto").info { "#{response.status_code} - #{elapsed.total_seconds.humanize(precision: 2, significant: false)}s" }
 
       Models::Result(Models::Message).from_json(response.body)
+    end
+
+    # https://core.telegram.org/bots/api#sendvideo
+    def send_video(
+      chat_id              : (Int64 | String),
+      video                : String,
+      duration             : Int64?                 = nil,
+      width                : Int64?                 = nil,
+      height               : Int64?                 = nil,
+      # thumb
+      caption              : String?                = nil,
+      parse_mode           : (ParseMode | String)?  = nil,
+      # caption_entities
+      # supports_streaming
+      disable_notification : Bool?                  = nil,
+      reply_to_message_id  : Int32?                 = nil,
+      # allow_sending_without_reply
+      reply_markup         : Models::ReplyMarkup?   = nil
+    )
+      body = {} of String => (Int64 | Int32 | String | Bool | Models::ReplyMarkup)
+
+      body["chat_id"] = chat_id
+      body["video"]   = video
+
+      if duration
+        body["duration"] = duration
+      end
+
+      if width
+        body["width"] = width
+      end
+
+      if height
+        body["height"] = height
+      end
+
+      if caption
+        body["caption"] = caption
+      end
+
+      if parse_mode
+        body["parse_mode"] = parse_mode.to_s
+      end
+
+      if !disable_notification.nil?
+        body["disable_notification"] = disable_notification
+      end
+
+      if reply_to_message_id
+        body["reply_to_message_id"] = reply_to_message_id
+      end
+
+      if reply_markup
+        body["reply_markup"] = reply_markup
+      end
+
+      perform_request(
+        "sendVideo",
+        Models::Result(Models::Message),
+        body: body
+      )
     end
 
     # https://core.telegram.org/bots/api#sendlocation
