@@ -169,7 +169,7 @@ module TelegramBot
       # property game                    : Game?
       property photo                   : Array(PhotoSize)?
       # property sticker                 : Sticker?
-      # property video                   : Video?
+      property video                   : Video?
       # property voice                   : Voice?
       # property video_note              : VideoNote?
       property caption                 : String?
@@ -407,6 +407,19 @@ module TelegramBot
       property file_unique_id : String
       property file_size : Int32?
       property file_path : String?
+    end
+
+    # https://core.telegram.org/bots/api#video
+    class Video < Base
+      property file_id : String
+      property file_unique_id : String
+      property width : Int64,
+      property height : Int64,
+      property duration : Int64,
+      property thumb : PhotoSize?,
+      property file_name : String?,
+      property mime_type : String?,
+      property file_size : Int64?
     end
 
     class BotCommand < Base

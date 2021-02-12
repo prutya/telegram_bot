@@ -5,7 +5,7 @@ require "uri"
 require "./telegram_bot/models"
 
 module TelegramBot
-  VERSION = "1.2.0"
+  VERSION = "1.3.0"
 
   Log = ::Log.for("telegram_bot")
 
@@ -485,6 +485,87 @@ module TelegramBot
         Models::Result(Models::Message),
         body: body
       )
+    end
+
+    # https://core.telegram.org/bots/api#sendvideo
+    def send_video(
+      chat_id              : (Int64 | String),
+      video                : IO,
+      duration             : Int64?                 = nil,
+      width                : Int64?                 = nil,
+      height               : Int64?                 = nil,
+      # thumb
+      caption              : String?                = nil,
+      parse_mode           : (ParseMode | String)?  = nil,
+      # caption_entities
+      # supports_streaming
+      disable_notification : Bool?                  = nil,
+      reply_to_message_id  : Int32?                 = nil,
+      # allow_sending_without_reply
+      reply_markup         : Models::ReplyMarkup?   = nil
+    )
+      io = IO::Memory.new
+
+      boundary = @random.hex(20)
+
+      HTTP::FormData.build(io, boundary) do |formdata|
+        formdata.field("chat_id", chat_id)
+
+        formdata.file(
+          "video",
+          photo,
+          HTTP::FormData::FileMetadata.new(filename: "video")
+        )
+
+        if duration
+          formdata.field("duration", duration)
+        end
+
+        if width
+          formdata.field("width", width)
+        end
+
+        if height
+          formdata.field("height", height)
+        end
+
+        if caption
+          formdata.field("caption", caption)
+        end
+
+        if parse_mode
+          formdata.field("parse_mode", parse_mode.to_s)
+        end
+
+        if !disable_notification.nil?
+          formdata.field("disable_notification", disable_notification)
+        end
+
+        if reply_to_message_id
+          formdata.field("reply_to_message_id", reply_to_message_id)
+        end
+
+        if reply_markup
+          formdata.field("reply_markup", reply_markup.to_json)
+        end
+      end
+
+      time_start = Time.monotonic
+
+      response = @http_client.post(
+        "/bot#{@token}/sendVideo",
+        headers: HTTP::Headers{
+          "Accept" => "application/json",
+          "Content-Type" => "multipart/form-data; boundary=#{boundary}"
+        },
+        body: io
+      )
+
+      elapsed = Time.monotonic - time_start
+
+      Log.for("sendVideo").info { "#{response.status_code} - #{elapsed.total_seconds.humanize(precision: 2, significant: false)}s" }
+
+      Models::Result(Models::Message).from_json(response.body)
     end
 
     # https://core.telegram.org/bots/api#sendlocation
