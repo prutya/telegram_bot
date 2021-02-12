@@ -413,12 +413,12 @@ module TelegramBot
     class Video < Base
       property file_id : String
       property file_unique_id : String
-      property width : Int64,
-      property height : Int64,
-      property duration : Int64,
-      property thumb : PhotoSize?,
-      property file_name : String?,
-      property mime_type : String?,
+      property width : Int64
+      property height : Int64
+      property duration : Int64
+      property thumb : PhotoSize?
+      property file_name : String?
+      property mime_type : String?
       property file_size : Int64?
     end
 
