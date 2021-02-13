@@ -21,14 +21,9 @@ module TelegramBot
     getter token : String
 
     def initialize(
-      @token       : String,
-      @http_client : HTTP::Client = HTTP::Client.new(host: "api.telegram.org", tls: true),
-      @random      : Random       = Random::Secure
+      @token  : String,
+      @random : Random = Random::Secure
     ); end
-
-    def finalize
-      @http_client.close
-    end
 
     # NOTE: Avoid using this method. Prefer webhooks.
     def listen
@@ -124,8 +119,8 @@ module TelegramBot
 
       time_start = Time.monotonic
 
-      response = @http_client.post(
-        "/bot#{@token}/setWebhook",
+      response = HTTP::Client.post(
+        "https://api.telegram.org/bot#{@token}/setWebhook",
         headers: HTTP::Headers{
           "Accept" => "application/json",
           "Content-Type" => "multipart/form-data; boundary=#{boundary}",
@@ -409,8 +404,8 @@ module TelegramBot
 
       time_start = Time.monotonic
 
-      response = @http_client.post(
-        "/bot#{@token}/sendPhoto",
+      response = HTTP::Client.post(
+        "https://api.telegram.org/bot#{@token}/sendPhoto",
         headers: HTTP::Headers{
           "Accept" => "application/json",
           "Content-Type" => "multipart/form-data; boundary=#{boundary}",
@@ -552,8 +547,8 @@ module TelegramBot
 
       time_start = Time.monotonic
 
-      response = @http_client.post(
-        "/bot#{@token}/sendVideo",
+      response = HTTP::Client.post(
+        "https://api.telegram.org/bot#{@token}/sendVideo",
         headers: HTTP::Headers{
           "Accept" => "application/json",
           "Content-Type" => "multipart/form-data; boundary=#{boundary}"
@@ -709,11 +704,11 @@ module TelegramBot
     end
 
     def download_file(file_path : String)
-      @http_client.get("/file/bot#{@token}/#{file_path}")
+      HTTP::Client.get("https://api.telegram.org/file/bot#{@token}/#{file_path}")
     end
 
     def download_file(file_path : String, &block : HTTP::Client::Response -> Nil)
-      @http_client.get("/file/bot#{@token}/#{file_path}") do |response|
+      HTTP::Client.get("https://api.telegram.org/file/bot#{@token}/#{file_path}") do |response|
         yield response
       end
     end
@@ -728,8 +723,8 @@ module TelegramBot
 
       time_start = Time.monotonic
 
-      response = @http_client.post(
-        "/bot#{@token}/#{endpoint}",
+      response = HTTP::Client.post(
+        "https://api.telegram.org/bot#{@token}/#{endpoint}",
         headers:
           HTTP::Headers{ "Accept" => "application/json" }.tap do |http_headers|
             if json_body
