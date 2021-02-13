@@ -453,7 +453,7 @@ module TelegramBot
 
     # https://core.telegram.org/bots/api#inputmediavideo
     class InputMediaVideo < InputMedia
-      property thumb : (String | IO)?
+      property thumb : String? # TODO: Implement thumb being an IO
       property width : Int64?
       property height : Int64?
       property duration : Int64?
@@ -464,7 +464,7 @@ module TelegramBot
         caption : String? = nil,
         parse_mode : (ParseMode | String)? = nil,
         caption_entities : Array(MessageEntity)? = nil,
-        @thumb : (String | IO)? = nil,
+        @thumb : String? = nil,
         @width : Int64? = nil,
         @height : Int64? = nil,
         @duration : Int64? = nil,
