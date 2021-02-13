@@ -5,7 +5,7 @@ require "uri"
 require "./telegram_bot/models"
 
 module TelegramBot
-  VERSION = "1.5.0"
+  VERSION = "1.6.0"
 
   Log = ::Log.for("telegram_bot")
 
@@ -566,6 +566,39 @@ module TelegramBot
       Log.for("sendVideo").info { "#{response.status_code} - #{elapsed.total_seconds.humanize(precision: 2, significant: false)}s" }
 
       Models::Result(Models::Message).from_json(response.body)
+    end
+
+    # TODO: Implement media : Array(String | IO)
+    # https://core.telegram.org/bots/api#sendmediagroup
+    def send_media_group(
+      chat_id : (Int64 | String),
+      media : Array(String),
+      disable_notification : Bool? = nil,
+      reply_to_message_id : Int32? = nil,
+      allow_sending_without_reply : Bool? = nil
+    )
+      body = {} of String => (Int64 | String | Array(String) | Bool | Int32)
+
+      body["chat_id"] = chat_id
+      body["media"] = media
+
+      if !disable_notification.nil?
+        body["disable_notification"] = disable_notification
+      end
+
+      if reply_to_message_id
+        body["reply_to_message_id"] = reply_to_message_id
+      end
+
+      if !allow_sending_without_reply.nil?
+        body["allow_sending_without_reply"] = allow_sending_without_reply
+      end
+
+      perform_request(
+        "sendMediaGroup",
+        Models::Result(Array(Models::Message)),
+        body: body
+      )
     end
 
     # https://core.telegram.org/bots/api#sendlocation
