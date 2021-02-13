@@ -422,6 +422,58 @@ module TelegramBot
       property file_size : Int64?
     end
 
+    abstract class InputMedia < Base
+      property type : String
+      property media : String
+      property caption : String?
+      property parse_mode : (ParseMode | String)?
+      property caption_entities : Array(MessageEntity)?
+
+      def initialize(
+        @type : String,
+        @media : String,
+        @caption : String? = nil,
+        @parse_mode : (ParseMode | String)? = nil,
+        @caption_entities : Array(MessageEntity)? = nil
+      )
+      end
+    end
+
+    # https://core.telegram.org/bots/api#inputmediaphoto
+    class InputMediaPhoto < InputMedia
+      def initialize(
+        media : String,
+        caption : String? = nil,
+        parse_mode : (ParseMode | String)? = nil,
+        caption_entities : Array(MessageEntity)? = nil
+      )
+        super("photo", media, caption, parse_mode, caption_entities)
+      end
+    end
+
+    # https://core.telegram.org/bots/api#inputmediavideo
+    class InputMediaVideo < InputMedia
+      property thumb : (String | IO)?
+      property width : Int64?
+      property height : Int64?
+      property duration : Int64?
+      property supports_streaming : Bool?
+
+      def initialize(
+        media : String,
+        caption : String? = nil,
+        parse_mode : (ParseMode | String)? = nil,
+        caption_entities : Array(MessageEntity)? = nil,
+        @thumb : (String | IO)? = nil,
+        @width : Int64? = nil,
+        @height : Int64? = nil,
+        @duration : Int64? = nil,
+        @supports_streaming : Bool? = nil
+      )
+        super("video", media, caption, parse_mode, caption_entities)
+      end
+    end
+
     class BotCommand < Base
       property command     : String
       property description : String

@@ -5,7 +5,7 @@ require "uri"
 require "./telegram_bot/models"
 
 module TelegramBot
-  VERSION = "1.6.0"
+  VERSION = "1.6.1"
 
   Log = ::Log.for("telegram_bot")
 
@@ -572,12 +572,12 @@ module TelegramBot
     # https://core.telegram.org/bots/api#sendmediagroup
     def send_media_group(
       chat_id : (Int64 | String),
-      media : Array(String),
+      media : Array(Models::InputMedia),
       disable_notification : Bool? = nil,
       reply_to_message_id : Int32? = nil,
       allow_sending_without_reply : Bool? = nil
     )
-      body = {} of String => (Int64 | String | Array(String) | Bool | Int32)
+      body = {} of String => (Int64 | String | Array(Models::InputMedia) | Bool | Int32)
 
       body["chat_id"] = chat_id
       body["media"] = media
