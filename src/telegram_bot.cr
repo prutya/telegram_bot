@@ -5,7 +5,7 @@ require "uri"
 require "./telegram_bot/models"
 
 module TelegramBot
-  VERSION = "1.7.0"
+  VERSION = "1.8.0"
 
   Log = ::Log.for("telegram_bot")
 
